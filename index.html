@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kairo — The calendar that plans your week for you</title>
+  <meta name="description" content="Kairo turns your tasks, meetings and priorities into a realistic weekly plan, and reshuffles it automatically when the day changes.">
+  <meta name="theme-color" content="#FBF8F3">
+  <meta property="og:title" content="Kairo — The calendar that plans your week for you">
+  <meta property="og:description" content="Auto-scheduling, protected focus time and smart rescheduling for busy teams.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2315130F'/%3E%3Cpath d='M10 23V9m0 7.5L18 9m-5 5.5L19.5 23' stroke='%23FF6B3D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='23.5' cy='10' r='2.5' fill='%23FFC94D'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600;700&display=swap">
+
+  <!-- Styles, in cascade order: design tokens → base → components → page sections -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/sections.css">
+
+  <!-- Each component is a small self-contained script. Classic deferred scripts also work from file://. -->
+  <script src="js/components/nav.js" defer></script>
+  <script src="js/components/pricing.js" defer></script>
+  <script src="js/components/accordion.js" defer></script>
+  <script src="js/components/reveal.js" defer></script>
+</head>
+<body>
+  <!-- Icon sprite, referenced with <use href="#icon-name"> -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/><path d="m12 12.2 1 2.1 2.1 1-2.1 1-1 2.1-1-2.1-2.1-1 2.1-1z"/></symbol>
+    <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 0 1 14.6-5.9L20.5 8.5"/><path d="M20.5 3.5v5h-5"/><path d="M20.5 12a8.5 8.5 0 0 1-14.6 5.9L3.5 15.5"/><path d="M3.5 20.5v-5h5"/></symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></symbol>
+    <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="4.5" y="11" width="3.5" height="7" rx="1"/><rect x="10.25" y="5" width="3.5" height="13" rx="1"/><rect x="16" y="13.5" width="3.5" height="4.5" rx="1"/></symbol>
+    <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l10-6.2a.8.8 0 0 0 0-1.4l-10-6.2a.8.8 0 0 0-1.2.7z"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 21.5s8-3.5 8-10V5.2L12 2.5 4 5.2v6.3c0 6.5 8 10 8 10z"/><path d="m8.8 12 2.2 2.2 4.2-4.4"/></symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></symbol>
+    <symbol id="icon-logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M10 23V9m0 7.5L18 9m-5 5.5L19.5 23" stroke="#FF6B3D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="23.5" cy="10" r="2.5" fill="#FFC94D"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============ Sticky navigation ============ -->
+  <header class="site-header" data-header>
+    <div class="container site-header__inner">
+      <a class="logo" href="#top" aria-label="Kairo home">
+        <svg class="logo__mark" aria-hidden="true"><use href="#icon-logo"/></svg>
+        <span class="logo__text">Kairo</span>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <ul class="nav__menu" id="nav-menu" data-nav-menu>
+          <li><a class="nav__link" href="#features" data-nav-link>Features</a></li>
+          <li><a class="nav__link" href="#how-it-works" data-nav-link>How it works</a></li>
+          <li><a class="nav__link" href="#pricing" data-nav-link>Pricing</a></li>
+          <li><a class="nav__link" href="#faq" data-nav-link>FAQ</a></li>
+          <li class="nav__mobile-actions">
+            <a class="btn btn--secondary btn--block" href="#">Log in</a>
+            <a class="btn btn--primary btn--block" href="#pricing">Start free trial</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <a class="nav__login" href="#">Log in</a>
+        <a class="btn btn--primary btn--sm" href="#pricing">Start free</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu" data-nav-toggle>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============ Hero ============ -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero__inner">
+        <a class="announcement" href="#features" data-reveal>
+          <span class="announcement__tag">New</span>
+          Smart rescheduling is here
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg>
+        </a>
+
+        <h1 class="hero__title" id="hero-title" data-reveal>
+          Stop planning your week.
+          <span class="hero__highlight">Start owning it.</span>
+        </h1>
+
+        <p class="hero__lead" data-reveal>
+          Kairo turns your tasks, meetings and priorities into a realistic weekly plan,
+          then quietly reshuffles it when the day doesn’t go to plan.
+        </p>
+
+        <div class="hero__actions" data-reveal>
+          <a class="btn btn--primary btn--lg" href="#pricing">
+            Start your free trial
+            <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg>
+          </a>
+          <a class="btn btn--secondary btn--lg" href="#how-it-works">
+            <svg class="icon icon--fill" aria-hidden="true"><use href="#icon-play"/></svg>
+            See how it works
+          </a>
+        </div>
+
+        <ul class="hero__trust" data-reveal>
+          <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>14-day free trial</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>No credit card required</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Cancel anytime</li>
+        </ul>
+
+        <!-- Product preview, drawn in HTML/CSS so it stays crisp at any size -->
+        <div class="hero__visual" data-reveal>
+          <div class="mockup" role="img" aria-label="Preview of Kairo's weekly planner with focus blocks, meetings and tasks scheduled across the week">
+            <div class="mockup__bar" aria-hidden="true">
+              <span class="mockup__dots"><i></i><i></i><i></i></span>
+              <span class="mockup__title">Week 44 · Oct 26 – 30</span>
+              <span class="mockup__pill">Auto-planned</span>
+            </div>
+            <div class="mockup__body" aria-hidden="true">
+              <aside class="mockup__side">
+                <p class="mockup__label">Today</p>
+                <ul class="mockup__tasks">
+                  <li class="is-done"><span></span>Review Q4 roadmap</li>
+                  <li class="is-done"><span></span>Reply to design feedback</li>
+                  <li><span></span>Write launch brief</li>
+                  <li><span></span>Prep 1:1 notes</li>
+                </ul>
+                <p class="mockup__label">Focus this week</p>
+                <div class="mockup__meter"><span style="width:78%"></span></div>
+                <p class="mockup__meter-text"><b>14h</b> of 18h goal</p>
+              </aside>
+              <div class="mockup__calendar">
+                <div class="mockup__days">
+                  <span></span><span>Mon 26</span><span>Tue 27</span><span>Wed 28</span><span class="is-today">Thu 29</span><span>Fri 30</span>
+                </div>
+                <div class="mockup__grid">
+                  <span class="mockup__time" style="--row:1">9</span>
+                  <span class="mockup__time" style="--row:3">11</span>
+                  <span class="mockup__time" style="--row:5">1</span>
+                  <span class="mockup__time" style="--row:7">3</span>
+
+                  <span class="event event--focus"   style="--day:1;--start:1;--span:2">Deep work</span>
+                  <span class="event event--meeting" style="--day:1;--start:3;--span:1">Standup</span>
+                  <span class="event event--task"    style="--day:1;--start:6;--span:2">Design review</span>
+
+                  <span class="event event--meeting" style="--day:2;--start:1;--span:1">Team sync</span>
+                  <span class="event event--focus"   style="--day:2;--start:2;--span:2">Focus</span>
+                  <span class="event event--task"    style="--day:2;--start:5;--span:2">Write spec</span>
+
+                  <span class="event event--focus"   style="--day:3;--start:1;--span:2">Deep work</span>
+                  <span class="event event--meeting" style="--day:3;--start:4;--span:1">1:1 with Sam</span>
+                  <span class="event event--meeting" style="--day:3;--start:7;--span:1">Customer call</span>
+
+                  <span class="event event--meeting is-moved" style="--day:4;--start:2;--span:1">Planning</span>
+                  <span class="event event--focus"   style="--day:4;--start:5;--span:3">Focus · launch brief</span>
+
+                  <span class="event event--focus"   style="--day:5;--start:1;--span:2">Deep work</span>
+                  <span class="event event--task"    style="--day:5;--start:4;--span:1">Inbox zero</span>
+                  <span class="event event--meeting" style="--day:5;--start:7;--span:1">Retro</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="float-card float-card--focus" aria-hidden="true">
+            <span class="float-card__icon"><svg class="icon"><use href="#icon-target"/></svg></span>
+            <span><b>+6h focus time</b><small>protected this week</small></span>
+          </div>
+          <div class="float-card float-card--moved" aria-hidden="true">
+            <span class="float-card__icon"><svg class="icon"><use href="#icon-refresh"/></svg></span>
+            <span><b>Planning moved to 10:00</b><small>Conflict resolved automatically</small></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Features ============ -->
+    <section class="section section--surface" id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Features</p>
+          <h2 class="section-title" id="features-title">Everything your week needs. Nothing it doesn’t.</h2>
+          <p class="section-lead">Kairo handles the busywork of scheduling so you can spend your energy on the work itself.</p>
+        </div>
+
+        <ul class="feature-grid">
+          <li class="feature-card" data-reveal>
+            <span class="feature-card__icon feature-card__icon--coral"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg></span>
+            <h3 class="feature-card__title">Auto-scheduling</h3>
+            <p class="feature-card__text">Add a task with a deadline and a time estimate. Kairo finds the best slot and books it on your calendar.</p>
+          </li>
+          <li class="feature-card" data-reveal>
+            <span class="feature-card__icon feature-card__icon--forest"><svg class="icon" aria-hidden="true"><use href="#icon-target"/></svg></span>
+            <h3 class="feature-card__title">Protected focus time</h3>
+            <p class="feature-card__text">Set a weekly focus goal and Kairo defends it, holding long blocks free before meetings can claim them.</p>
+          </li>
+          <li class="feature-card" data-reveal>
+            <span class="feature-card__icon feature-card__icon--butter"><svg class="icon" aria-hidden="true"><use href="#icon-refresh"/></svg></span>
+            <h3 class="feature-card__title">Smart rescheduling</h3>
+            <p class="feature-card__text">Meeting ran over? Urgent request? Your plan reshuffles in seconds, keeping deadlines and priorities intact.</p>
+          </li>
+          <li class="feature-card" data-reveal>
+            <span class="feature-card__icon feature-card__icon--sky"><svg class="icon" aria-hidden="true"><use href="#icon-users"/></svg></span>
+            <h3 class="feature-card__title">Team availability</h3>
+            <p class="feature-card__text">See when everyone is actually free, across time zones, and book the slot that breaks the fewest focus blocks.</p>
+          </li>
+          <li class="feature-card" data-reveal>
+            <span class="feature-card__icon feature-card__icon--lilac"><svg class="icon" aria-hidden="true"><use href="#icon-chart"/></svg></span>
+            <h3 class="feature-card__title">Workload insights</h3>
+            <p class="feature-card__text">A short weekly report shows where your time went, so you can spot meeting creep before it becomes a habit.</p>
+          </li>
+          <li class="feature-card" data-reveal>
+            <span class="feature-card__icon feature-card__icon--mint"><svg class="icon" aria-hidden="true"><use href="#icon-link"/></svg></span>
+            <h3 class="feature-card__title">Two-way sync</h3>
+            <p class="feature-card__text">Connect the calendars and task tools you already use. Changes flow both ways in real time.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ How it works ============ -->
+    <section class="section" id="how-it-works" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">How it works</p>
+          <h2 class="section-title" id="how-title">From chaos to a calm week in three steps</h2>
+        </div>
+
+        <ol class="steps">
+          <li class="step" data-reveal>
+            <span class="step__number" aria-hidden="true">01</span>
+            <h3 class="step__title">Connect your calendar</h3>
+            <p class="step__text">Sign in and link your work calendar. Kairo reads your existing meetings in under a minute.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__number" aria-hidden="true">02</span>
+            <h3 class="step__title">Add your priorities</h3>
+            <p class="step__text">List what has to get done this week, how long each task takes and when it’s due.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__number" aria-hidden="true">03</span>
+            <h3 class="step__title">Let Kairo plan</h3>
+            <p class="step__text">Get a realistic plan instantly. When things change, it adapts so you don’t have to.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ Pricing ============ -->
+    <section class="section section--surface" id="pricing" aria-labelledby="pricing-title" data-pricing>
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Pricing</p>
+          <h2 class="section-title" id="pricing-title">Simple pricing that grows with your team</h2>
+          <p class="section-lead">Start free, upgrade when you need more. Every paid plan includes a 14-day trial.</p>
+        </div>
+
+        <fieldset class="billing-toggle" data-reveal>
+          <legend class="sr-only">Billing period</legend>
+          <div class="billing-toggle__track">
+            <input class="billing-toggle__input" type="radio" id="billing-monthly" name="billing" value="monthly" checked>
+            <label class="billing-toggle__option" for="billing-monthly">Monthly</label>
+            <input class="billing-toggle__input" type="radio" id="billing-annual" name="billing" value="annual">
+            <label class="billing-toggle__option" for="billing-annual">Annual <span class="billing-toggle__save">−20%</span></label>
+            <span class="billing-toggle__thumb" aria-hidden="true"></span>
+          </div>
+        </fieldset>
+        <p class="sr-only" role="status" aria-live="polite" data-billing-status></p>
+
+        <div class="pricing-grid">
+          <article class="price-card" aria-labelledby="plan-starter" data-reveal>
+            <h3 class="price-card__name" id="plan-starter">Starter</h3>
+            <p class="price-card__desc">For individuals getting their own week under control.</p>
+            <p class="price">
+              <span class="price__currency">$</span><span class="price__amount" data-price data-monthly="0" data-annual="0">0</span>
+              <span class="price__period">/ month</span>
+            </p>
+            <p class="price-card__note" data-note data-monthly="Free forever" data-annual="Free forever">Free forever</p>
+            <a class="btn btn--secondary btn--block" href="#">Get started</a>
+            <ul class="checklist">
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>1 connected calendar</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Auto-schedule up to 20 tasks a week</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Protected focus blocks</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Basic weekly summary</li>
+            </ul>
+          </article>
+
+          <article class="price-card price-card--featured" aria-labelledby="plan-pro" data-reveal>
+            <p class="price-card__badge">Most popular</p>
+            <h3 class="price-card__name" id="plan-pro">Pro</h3>
+            <p class="price-card__desc">For professionals who live in their calendar.</p>
+            <p class="price">
+              <span class="price__currency">$</span><span class="price__amount" data-price data-monthly="15" data-annual="12">15</span>
+              <span class="price__period">/ user / month</span>
+            </p>
+            <p class="price-card__note" data-note data-monthly="Billed monthly" data-annual="$144 billed yearly per user">Billed monthly</p>
+            <a class="btn btn--primary btn--block" href="#">Start free trial</a>
+            <ul class="checklist">
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Everything in Starter</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Unlimited tasks</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Smart rescheduling</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Up to 5 calendars &amp; integrations</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Detailed workload insights</li>
+            </ul>
+          </article>
+
+          <article class="price-card" aria-labelledby="plan-team" data-reveal>
+            <h3 class="price-card__name" id="plan-team">Team</h3>
+            <p class="price-card__desc">For teams that plan, meet and ship together.</p>
+            <p class="price">
+              <span class="price__currency">$</span><span class="price__amount" data-price data-monthly="25" data-annual="20">25</span>
+              <span class="price__period">/ user / month</span>
+            </p>
+            <p class="price-card__note" data-note data-monthly="Billed monthly" data-annual="$240 billed yearly per user">Billed monthly</p>
+            <a class="btn btn--secondary btn--block" href="#">Start free trial</a>
+            <ul class="checklist">
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Everything in Pro</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Shared team availability</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Team-wide focus policies</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Admin controls &amp; SSO</li>
+              <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>Priority support</li>
+            </ul>
+          </article>
+        </div>
+
+        <p class="pricing__footnote" data-reveal>
+          <svg class="icon" aria-hidden="true"><use href="#icon-shield"/></svg>
+          <span>Prices in USD. Need more than 50 seats? <a href="#">Talk to sales</a>.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container faq">
+        <div class="faq__intro" data-reveal>
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title" id="faq-title">Questions, answered</h2>
+          <p class="section-lead">Everything you need to know before you start. Can’t find your answer?</p>
+          <a class="contact-card" href="#">
+            <span class="contact-card__icon"><svg class="icon" aria-hidden="true"><use href="#icon-mail"/></svg></span>
+            <span><b>Talk to our team</b><small>We reply within one business day</small></span>
+            <svg class="icon contact-card__arrow" aria-hidden="true"><use href="#icon-arrow"/></svg>
+          </a>
+        </div>
+
+        <div class="accordion" data-accordion data-reveal>
+          <div class="accordion__item">
+            <h3 class="accordion__heading">
+              <button class="accordion__trigger" id="faq-1-trigger" type="button" aria-expanded="true" aria-controls="faq-1-panel" data-accordion-trigger>
+                <span>How does the free trial work?</span><span class="accordion__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion__panel" id="faq-1-panel" role="region" aria-labelledby="faq-1-trigger">
+              <div class="accordion__content">
+                <p>You get every Pro feature free for 14 days, with no credit card required. At the end of the trial you can pick a paid plan or keep using Starter for free.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <h3 class="accordion__heading">
+              <button class="accordion__trigger" id="faq-2-trigger" type="button" aria-expanded="false" aria-controls="faq-2-panel" data-accordion-trigger>
+                <span>Can I switch between monthly and annual billing?</span><span class="accordion__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion__panel" id="faq-2-panel" role="region" aria-labelledby="faq-2-trigger">
+              <div class="accordion__content">
+                <p>Yes. Switch at any time from your billing settings. Moving to annual applies the 20% discount right away and credits any unused monthly time.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <h3 class="accordion__heading">
+              <button class="accordion__trigger" id="faq-3-trigger" type="button" aria-expanded="false" aria-controls="faq-3-panel" data-accordion-trigger>
+                <span>Which calendars does Kairo work with?</span><span class="accordion__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion__panel" id="faq-3-panel" role="region" aria-labelledby="faq-3-trigger">
+              <div class="accordion__content">
+                <p>Kairo syncs two ways with Google Calendar, Microsoft Outlook and any calendar that supports CalDAV. You can connect personal and work calendars side by side.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <h3 class="accordion__heading">
+              <button class="accordion__trigger" id="faq-4-trigger" type="button" aria-expanded="false" aria-controls="faq-4-panel" data-accordion-trigger>
+                <span>Is my calendar data secure?</span><span class="accordion__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion__panel" id="faq-4-panel" role="region" aria-labelledby="faq-4-trigger">
+              <div class="accordion__content">
+                <p>All data is encrypted in transit and at rest. Kairo only reads what it needs to schedule, never sells your data, and lets you disconnect and delete everything in one click.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <h3 class="accordion__heading">
+              <button class="accordion__trigger" id="faq-5-trigger" type="button" aria-expanded="false" aria-controls="faq-5-panel" data-accordion-trigger>
+                <span>Can I change plans or cancel later?</span><span class="accordion__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion__panel" id="faq-5-panel" role="region" aria-labelledby="faq-5-trigger">
+              <div class="accordion__content">
+                <p>Upgrade, downgrade or cancel whenever you like. Changes take effect at the end of your current billing period, and your data stays available for 30 days after cancelling.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion__item">
+            <h3 class="accordion__heading">
+              <button class="accordion__trigger" id="faq-6-trigger" type="button" aria-expanded="false" aria-controls="faq-6-panel" data-accordion-trigger>
+                <span>Do you offer discounts for students or nonprofits?</span><span class="accordion__icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="accordion__panel" id="faq-6-panel" role="region" aria-labelledby="faq-6-trigger">
+              <div class="accordion__content">
+                <p>Yes. Students get Pro free with a valid school email, and registered nonprofits get 50% off any paid plan. Contact us to apply.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Final call to action ============ -->
+    <section class="cta" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta__panel" data-reveal>
+          <h2 class="cta__title" id="cta-title">Ready to take back your week?</h2>
+          <p class="cta__lead">Set up Kairo in five minutes and see your first auto-planned week today.</p>
+          <div class="cta__actions">
+            <a class="btn btn--accent btn--lg" href="#pricing">
+              Start your free trial
+              <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg>
+            </a>
+            <a class="btn btn--ghost-light btn--lg" href="#">Book a demo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ Footer ============ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__top">
+        <div class="site-footer__brand">
+          <a class="logo logo--light" href="#top" aria-label="Kairo home">
+            <svg class="logo__mark" aria-hidden="true"><use href="#icon-logo"/></svg>
+            <span class="logo__text">Kairo</span>
+          </a>
+          <p>The calendar that plans your week for you.</p>
+        </div>
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div>
+            <h3 class="site-footer__heading">Product</h3>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#how-it-works">How it works</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="site-footer__heading">Company</h3>
+            <ul>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="site-footer__heading">Resources</h3>
+            <ul>
+              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#">Help center</a></li>
+              <li><a href="#">Privacy</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="site-footer__bottom">
+        <p>© 2026 Kairo. A demo landing page.</p>
+        <p>Made with HTML, CSS &amp; JavaScript.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
